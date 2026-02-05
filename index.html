@@ -413,6 +413,16 @@
                 </div>
             </div>
         </div>
+
+        <!-- Holders Section -->
+        <div id="section-holders" class="page-section" style="display:none">
+            <h2 style="margin-bottom:20px">Top Holders</h2>
+            <div class="card" style="padding:0">
+                <div id="holdersList">
+                    <div style="padding:40px; text-align:center; color:#555">Calculating balances...</div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="status-bar" id="debugLog">System Initialized.</div>
@@ -472,6 +482,32 @@
             }
         }
 
+        function calculateHolders(chain) {
+            const balances = {};
+            let totalPossibleReward = 0;
+
+            chain.forEach(block => {
+                if (!block.transactions) return; // Skip blocks with no transactions
+                block.transactions.forEach(tx => {
+                    const amount = parseFloat(tx.amount) || 0;
+
+                    // Sender decrease (unless SYSTEM)
+                    if (tx.sender !== "SYSTEM") {
+                        balances[tx.sender] = (balances[tx.sender] || 0) - amount;
+                    }
+
+                    // Receiver increase
+                    balances[tx.recipient] = (balances[tx.recipient] || 0) + amount;
+                });
+            });
+
+            // Convert to array and sort
+            return Object.entries(balances)
+                .map(([address, balance]) => ({ address, balance }))
+                .filter(h => h.balance > 0)
+                .sort((a, b) => b.balance - a.balance);
+        }
+
         function render(chain) {
             try {
                 if (!chain || chain.length === 0) return;
@@ -480,13 +516,16 @@
                 // Global Stats
                 document.getElementById('statHeight').innerText = chain.length.toLocaleString();
                 document.getElementById('statDiff').innerText = head.difficulty || 4;
-                document.getElementById('statSupply').innerText = (chain.length * 132575).toLocaleString() + " HOME";
+
+                const holders = calculateHolders(chain);
+                const totalSupply = holders.reduce((acc, h) => acc + h.balance, 0);
+                document.getElementById('statSupply').innerText = totalSupply.toLocaleString() + " HOME";
 
                 // Blocks List (Summary & Full)
                 const containerSummary = document.getElementById('blocksListSummary');
                 const containerFull = document.getElementById('blocksListFull');
 
-                containerSummary.innerHTML = '';
+                if (containerSummary) containerSummary.innerHTML = '';
                 if (containerFull) containerFull.innerHTML = '';
 
                 const sortedBlocks = [...chain].reverse();
@@ -512,7 +551,7 @@
                         </div>
                     `;
 
-                    if (idx < 7) containerSummary.innerHTML += rowHtml;
+                    if (idx < 7 && containerSummary) containerSummary.innerHTML += rowHtml;
                     if (containerFull) containerFull.innerHTML += rowHtml;
                 });
 
@@ -520,7 +559,7 @@
                 const txSummary = document.getElementById('txListSummary');
                 const txFull = document.getElementById('txListFull');
 
-                txSummary.innerHTML = '';
+                if (txSummary) txSummary.innerHTML = '';
                 if (txFull) txFull.innerHTML = '';
 
                 let txCountSummary = 0;
@@ -552,23 +591,47 @@
                             </div>
                         `;
 
-                        if (txCountSummary < 7) {
+                        if (txCountSummary < 7 && txSummary) {
                             txSummary.innerHTML += rowHtml;
                             txCountSummary++;
                         }
 
-                        if (txCountFull < 50 && txFull) { // Limit full list to 50 for performance
+                        if (txCountFull < 50 && txFull) {
                             txFull.innerHTML += rowHtml;
                             txCountFull++;
                         }
                     }
                 }
 
-                if (txCountSummary === 0) {
+                if (txCountSummary === 0 && txSummary) {
                     txSummary.innerHTML = '<div style="padding:20px; text-align:center; color:#555">No recent transactions</div>';
                 }
                 if (txCountFull === 0 && txFull) {
                     txFull.innerHTML = '<div style="padding:40px; text-align:center; color:#555">No transactions found.</div>';
+                }
+
+                // Holders List
+                const holdersList = document.getElementById('holdersList');
+                if (holdersList) {
+                    holdersList.innerHTML = '';
+                    holders.slice(0, 100).forEach((h, idx) => {
+                        const stake = ((h.balance / totalSupply) * 100).toFixed(2);
+                        holdersList.innerHTML += `
+                            <div class="table-row">
+                                <div style="display:flex; align-items:center;">
+                                    <div class="row-icon" style="background:var(--accent); color:#000; font-weight:bold">${idx + 1}</div>
+                                    <div class="row-data">
+                                        <span class="row-primary">${h.address}</span>
+                                        <span class="row-secondary">Stake: ${stake}%</span>
+                                    </div>
+                                </div>
+                                <div class="row-meta">
+                                    <span class="row-primary">${h.balance.toLocaleString()} HOME</span>
+                                    <span class="badge-pill" style="margin-top:4px">HOLDING</span>
+                                </div>
+                            </div>
+                        `;
+                    });
                 }
 
             } catch (err) {
