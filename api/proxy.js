@@ -16,9 +16,15 @@ export default async function handler(request, response) {
     }
 
     try {
-        const targetUrl = `http://ec2-13-220-187-107.compute-1.amazonaws.com:5000${endpoint}`;
+        // Use the persistent Tunnel URL to bypass AWS Firewall
+        const targetUrl = `https://homechain-live.loca.lt${endpoint}`;
 
-        const res = await fetch(targetUrl);
+        // Add bypass header for localtunnel "Click to continue" page (just in case)
+        const res = await fetch(targetUrl, {
+            headers: {
+                'Bypass-Tunnel-Reminder': 'true'
+            }
+        });
 
         if (!res.ok) {
             throw new Error(`Node replied using status ${res.status}`);
