@@ -16,15 +16,11 @@ export default async function handler(request, response) {
     }
 
     try {
-        // Use the persistent Tunnel URL to bypass AWS Firewall
-        const targetUrl = `https://homechain-live.loca.lt${endpoint}`;
+        // Use the persistent Serveo Tunnel URL
+        const targetUrl = `https://homechain-live.serveo.net${endpoint}`;
 
-        // Add bypass header for localtunnel "Click to continue" page (just in case)
-        const res = await fetch(targetUrl, {
-            headers: {
-                'Bypass-Tunnel-Reminder': 'true'
-            }
-        });
+        // Serveo doesn't usually require bypass headers, but we keep it clean
+        const res = await fetch(targetUrl);
 
         if (!res.ok) {
             throw new Error(`Node replied using status ${res.status}`);
