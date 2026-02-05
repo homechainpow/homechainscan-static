@@ -497,7 +497,7 @@
                     }
 
                     // Receiver increase
-                    balances[tx.recipient] = (balances[tx.recipient] || 0) + amount;
+                    balances[tx.receiver] = (balances[tx.receiver] || 0) + amount;
                 });
             });
 
@@ -572,8 +572,8 @@
                         const txId = tx.id ? tx.id : "System/Reward";
                         const txIdShort = txId.length > 16 ? txId.substring(0, 16) + '...' : txId;
 
-                        const recipient = tx.recipient ? tx.recipient : "Unknown";
-                        const recipientShort = recipient.length > 12 ? recipient.substring(0, 12) + '...' : recipient;
+                        const receiver = tx.receiver ? tx.receiver : "Unknown";
+                        const receiverShort = receiver.length > 12 ? receiver.substring(0, 12) + '...' : receiver;
 
                         const rowHtml = `
                             <div class="table-row">
@@ -586,7 +586,7 @@
                                 </div>
                                 <div class="row-meta">
                                     <span class="badge-pill">+${tx.amount.toLocaleString()} HOME</span>
-                                    <span class="row-secondary" style="margin-top:4px">To: ${recipientShort}</span>
+                                    <span class="row-secondary" style="margin-top:4px">To: ${receiverShort}</span>
                                 </div>
                             </div>
                         `;
