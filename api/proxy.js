@@ -16,11 +16,16 @@ export default async function handler(request, response) {
     }
 
     try {
-        // Use the persistent Serveo Tunnel URL
-        const targetUrl = `https://homechain-live.serveo.net${endpoint}`;
+        // Use the persistent Unique Localtunnel URL
+        const targetUrl = `https://homechain-mainnet-x82z.loca.lt${endpoint}`;
 
-        // Serveo doesn't usually require bypass headers, but we keep it clean
-        const res = await fetch(targetUrl);
+        // Add bypass header for localtunnel
+        const res = await fetch(targetUrl, {
+            headers: {
+                'Bypass-Tunnel-Reminder': 'true',
+                'User-Agent': 'HomeChainScanner/1.0'
+            }
+        });
 
         if (!res.ok) {
             throw new Error(`Node replied using status ${res.status}`);
