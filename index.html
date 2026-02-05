@@ -504,7 +504,13 @@
 
                 // Global Stats
                 document.getElementById('statHeight').innerText = chain.length.toLocaleString();
-                document.getElementById('statDiff').innerText = head.difficulty || 4;
+
+                // Difficulty Calculation: MaxTarget / CurrentTarget
+                const MAX_TARGET = BigInt("0x0000FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF");
+                const currentTarget = BigInt(head.target || MAX_TARGET);
+                const relDiff = head.target ? (Number(MAX_TARGET) / Number(currentTarget)).toFixed(2) : "1.00";
+
+                document.getElementById('statDiff').innerText = relDiff;
 
                 const holders = calculateHolders(chain);
                 const totalSupply = holders.reduce((acc, h) => acc + h.balance, 0);
