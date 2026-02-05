@@ -278,16 +278,18 @@
 <body>
 
     <nav class="navbar">
-        <div class="brand">
+        <div class="brand" onclick="switchTab('home')" style="cursor:pointer">
             <img src="logo.png" alt="HomeChain" style="height: 38px; width: auto; border-radius: 8px;">
             <span>HomeChainScan</span>
         </div>
         <div class="nav-links">
-            <a href="#" class="nav-link active">Home</a>
-            <a href="#" class="nav-link">Blocks</a>
-            <a href="#" class="nav-link">Transactions</a>
-            <a href="#" class="nav-link">Analytics</a>
-            <a href="#" class="nav-link">Validators</a>
+            <a href="javascript:void(0)" class="nav-link active" id="nav-home" onclick="switchTab('home')">Home</a>
+            <a href="javascript:void(0)" class="nav-link" id="nav-blocks" onclick="switchTab('blocks')">Blocks</a>
+            <a href="javascript:void(0)" class="nav-link" id="nav-txs" onclick="switchTab('txs')">Transactions</a>
+            <a href="javascript:void(0)" class="nav-link" id="nav-analytics"
+                onclick="switchTab('analytics')">Analytics</a>
+            <a href="javascript:void(0)" class="nav-link" id="nav-validators"
+                onclick="switchTab('validators')">Validators</a>
         </div>
         <div class="search-bar">
             <input type="text" class="search-input" placeholder="Search by Block, Transaction, Account">
@@ -299,14 +301,148 @@
             </div>
         </div>
     </nav>
-    <!-- ... (skipping ahead to the script part) ... -->
+
+    <div class="container">
+        <!-- Dashboard Section (Home) -->
+        <div id="section-home" class="page-section">
+            <div class="market-overview">
+                <div class="card">
+                    <div class="card-label">Block Height</div>
+                    <div class="card-value" id="statHeight">---</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Network Difficulty</div>
+                    <div class="card-value" id="statDiff">---</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Total Supply</div>
+                    <div class="card-value" id="statSupply">---</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Active Validators</div>
+                    <div class="card-value">1 (Mainnet)</div>
+                </div>
+            </div>
+
+            <div class="split-view">
+                <div class="card" style="padding:0">
+                    <div class="section-header">
+                        <div class="section-title">Latest Blocks</div>
+                        <a class="view-all" onclick="switchTab('blocks')">View All</a>
+                    </div>
+                    <div id="blocksListSummary">
+                        <div style="padding:20px; text-align:center; color:#555">Loading blocks...</div>
+                    </div>
+                </div>
+
+                <div class="card" style="padding:0">
+                    <div class="section-header">
+                        <div class="section-title">Latest Transactions</div>
+                        <a class="view-all" onclick="switchTab('txs')">View All</a>
+                    </div>
+                    <div id="txListSummary">
+                        <div style="padding:20px; text-align:center; color:#555">Loading transactions...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blocks Section -->
+        <div id="section-blocks" class="page-section" style="display:none">
+            <h2 style="margin-bottom:20px">Blocks</h2>
+            <div class="card" style="padding:0">
+                <div id="blocksListFull">
+                    <div style="padding:40px; text-align:center; color:#555">Loading blockchain data...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Section -->
+        <div id="section-txs" class="page-section" style="display:none">
+            <h2 style="margin-bottom:20px">Transactions</h2>
+            <div class="card" style="padding:0">
+                <div id="txListFull">
+                    <div style="padding:40px; text-align:center; color:#555">Loading transaction data...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Analytics Section -->
+        <div id="section-analytics" class="page-section" style="display:none">
+            <h2 style="margin-bottom:20px">Network Analytics</h2>
+            <div class="market-overview">
+                <div class="card">
+                    <div class="card-label">TPS (Current)</div>
+                    <div class="card-value">---</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Market Cap (Mock)</div>
+                    <div class="card-value">$---</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Avg. Block Time</div>
+                    <div class="card-value">---</div>
+                </div>
+                <div class="card">
+                    <div class="card-label">Mining Revenue</div>
+                    <div class="card-value">1.325M HOME/Block</div>
+                </div>
+            </div>
+            <div class="card"
+                style="height:300px; display:flex; align-items:center; justify-content:center; color:var(--text-secondary)">
+                Hashrate & Difficulty Chart (Coming Soon with Supabase Integration)
+            </div>
+        </div>
+
+        <!-- Validators Section -->
+        <div id="section-validators" class="page-section" style="display:none">
+            <h2 style="margin-bottom:20px">Active Validators</h2>
+            <div class="card" style="padding:0">
+                <div class="table-row">
+                    <div style="display:flex; align-items:center">
+                        <div class="row-icon">VN</div>
+                        <div class="row-data">
+                            <span class="row-primary">Mainnet-AWS-Primary</span>
+                            <span class="row-secondary">ID: ec2-13-220-55...</span>
+                        </div>
+                    </div>
+                    <div class="row-meta">
+                        <span class="badge-pill">ACTIVE</span>
+                        <span class="row-secondary" style="margin-top:4px">Connected Since: Genesis</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-bar" id="debugLog">System Initialized.</div>
+
     <script>
         // Use the proxy endpoint
         const API = "/api/proxy?endpoint=";
+        let globalChain = [];
+        let currentTab = 'home';
 
         function log(msg) {
             const d = new Date().toLocaleTimeString();
             document.getElementById('debugLog').innerText = `[${d}] ${msg}`;
+        }
+
+        function switchTab(tabName) {
+            currentTab = tabName;
+
+            // Hide all sections
+            document.querySelectorAll('.page-section').forEach(s => s.style.display = 'none');
+            // Show target
+            document.getElementById(`section-${tabName}`).style.display = 'block';
+
+            // Update Nav Active State
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            const navItem = document.getElementById(`nav-${tabName}`);
+            if (navItem) navItem.classList.add('active');
+
+            // Re-render data if we have it
+            if (globalChain.length > 0) render(globalChain);
         }
 
         async function fetchChain() {
@@ -317,14 +453,14 @@
                 const data = await res.json();
                 if (!data || !data.chain) throw new Error("Invalid API response structure");
 
-                const chain = data.chain;
-                render(chain);
+                globalChain = data.chain;
+                render(globalChain);
 
                 const statusEl = document.getElementById('connStatus');
                 statusEl.querySelector('span').innerText = "OPERATIONAL";
                 statusEl.style.color = "var(--accent)";
                 statusEl.style.background = "rgba(0, 255, 213, 0.1)";
-                log(`Synced. Height: ${chain.length}`);
+                log(`Synced. Height: ${globalChain.length}`);
 
             } catch (e) {
                 console.error(e);
@@ -341,85 +477,103 @@
                 if (!chain || chain.length === 0) return;
                 const head = chain[chain.length - 1];
 
-                // Stats
+                // Global Stats
                 document.getElementById('statHeight').innerText = chain.length.toLocaleString();
                 document.getElementById('statDiff').innerText = head.difficulty || 4;
                 document.getElementById('statSupply').innerText = (chain.length * 132575).toLocaleString() + " HOME";
 
-                // Blocks List
-                const blocksContainer = document.getElementById('blocksList');
-                blocksContainer.innerHTML = '';
+                // Blocks List (Summary & Full)
+                const containerSummary = document.getElementById('blocksListSummary');
+                const containerFull = document.getElementById('blocksListFull');
 
-                const recentBlocks = [...chain].reverse().slice(0, 7);
+                containerSummary.innerHTML = '';
+                if (containerFull) containerFull.innerHTML = '';
 
-                recentBlocks.forEach(b => {
+                const sortedBlocks = [...chain].reverse();
+
+                sortedBlocks.forEach((b, idx) => {
                     const validator = b.validator ? b.validator : "00000000";
-                    const validatorShort = validator.length > 8 ? validator.substring(0, 8) + '...' : validator;
+                    const validatorShort = validator.length > 12 ? validator.substring(0, 12) + '...' : validator;
 
-                    const div = document.createElement('div');
-                    div.className = 'table-row';
-                    div.innerHTML = `
-                        <div style="display:flex; align-items:center;">
-                            <div class="row-icon">BK</div>
-                            <div class="row-data">
-                                <span class="row-primary">#${b.index}</span>
-                                <span class="row-secondary">${timeAgo(b.timestamp)}</span>
-                            </div>
-                        </div>
-                        <div class="row-meta">
-                            <span class="row-secondary">Validated by</span>
-                            <span class="row-primary" style="font-size:12px">${validatorShort}</span>
-                            <span class="badge-pill">${b.transactions ? b.transactions.length : 0} Txs</span>
-                        </div>
-                    `;
-                    blocksContainer.appendChild(div);
-                });
-
-                // Transactions List
-                const txContainer = document.getElementById('txList');
-                txContainer.innerHTML = '';
-
-                let txCount = 0;
-                for (let b of recentBlocks) {
-                    if (txCount >= 7) break;
-                    if (!b.transactions) continue;
-
-                    for (let tx of b.transactions) {
-                        if (txCount >= 7) break;
-
-                        const txId = tx.id ? tx.id : "System/Reward";
-                        const txIdShort = txId.length > 12 ? txId.substring(0, 12) + '...' : txId;
-
-                        const recipient = tx.recipient ? tx.recipient : "Unknown";
-                        const recipientShort = recipient.length > 8 ? recipient.substring(0, 8) + '...' : recipient;
-
-                        const div = document.createElement('div');
-                        div.className = 'table-row';
-                        div.innerHTML = `
+                    const rowHtml = `
+                        <div class="table-row">
                             <div style="display:flex; align-items:center;">
-                                <div class="row-icon" style="color:#fff; font-size:10px">TX</div>
+                                <div class="row-icon">BK</div>
                                 <div class="row-data">
-                                    <span class="row-primary">${txIdShort}</span>
-                                    <span class="row-secondary">Block #${b.index}</span>
+                                    <span class="row-primary">#${b.index}</span>
+                                    <span class="row-secondary">${timeAgo(b.timestamp)}</span>
                                 </div>
                             </div>
                             <div class="row-meta">
-                                <span class="badge-pill">+${tx.amount} HOME</span>
-                                <span class="row-secondary" style="margin-top:4px">To: ${recipientShort}</span>
+                                <span class="row-secondary">Validated by</span>
+                                <span class="row-primary" style="font-size:12px">${validatorShort}</span>
+                                <span class="badge-pill">${b.transactions ? b.transactions.length : 0} Txs</span>
+                            </div>
+                        </div>
+                    `;
+
+                    if (idx < 7) containerSummary.innerHTML += rowHtml;
+                    if (containerFull) containerFull.innerHTML += rowHtml;
+                });
+
+                // Transactions List (Summary & Full)
+                const txSummary = document.getElementById('txListSummary');
+                const txFull = document.getElementById('txListFull');
+
+                txSummary.innerHTML = '';
+                if (txFull) txFull.innerHTML = '';
+
+                let txCountSummary = 0;
+                let txCountFull = 0;
+
+                for (let b of sortedBlocks) {
+                    if (!b.transactions) continue;
+
+                    for (let tx of b.transactions) {
+                        const txId = tx.id ? tx.id : "System/Reward";
+                        const txIdShort = txId.length > 16 ? txId.substring(0, 16) + '...' : txId;
+
+                        const recipient = tx.recipient ? tx.recipient : "Unknown";
+                        const recipientShort = recipient.length > 12 ? recipient.substring(0, 12) + '...' : recipient;
+
+                        const rowHtml = `
+                            <div class="table-row">
+                                <div style="display:flex; align-items:center;">
+                                    <div class="row-icon" style="color:#fff; font-size:10px">TX</div>
+                                    <div class="row-data">
+                                        <span class="row-primary">${txIdShort}</span>
+                                        <span class="row-secondary">Block #${b.index}</span>
+                                    </div>
+                                </div>
+                                <div class="row-meta">
+                                    <span class="badge-pill">+${tx.amount.toLocaleString()} HOME</span>
+                                    <span class="row-secondary" style="margin-top:4px">To: ${recipientShort}</span>
+                                </div>
                             </div>
                         `;
-                        txContainer.appendChild(div);
-                        txCount++;
+
+                        if (txCountSummary < 7) {
+                            txSummary.innerHTML += rowHtml;
+                            txCountSummary++;
+                        }
+
+                        if (txCountFull < 50 && txFull) { // Limit full list to 50 for performance
+                            txFull.innerHTML += rowHtml;
+                            txCountFull++;
+                        }
                     }
                 }
 
-                if (txCount === 0) {
-                    txContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#555">No recent transactions</div>';
+                if (txCountSummary === 0) {
+                    txSummary.innerHTML = '<div style="padding:20px; text-align:center; color:#555">No recent transactions</div>';
                 }
+                if (txCountFull === 0 && txFull) {
+                    txFull.innerHTML = '<div style="padding:40px; text-align:center; color:#555">No transactions found.</div>';
+                }
+
             } catch (err) {
                 console.error("Render Error:", err);
-                log("Rendering error occurred. Check console.");
-                throw err; // Re-throw to trigger CONNECTION FAILED state
+                log("Rendering error occurred. Check browser console.");
             }
         }
 
@@ -427,7 +581,9 @@
             const seconds = Math.floor((Date.now() / 1000) - ts);
             if (seconds < 60) return seconds + "s ago";
             const minutes = Math.floor(seconds / 60);
-            return minutes + "m ago";
+            if (minutes < 60) return minutes + "m ago";
+            const hours = Math.floor(minutes / 60);
+            return hours + "h ago";
         }
 
         fetchChain();
