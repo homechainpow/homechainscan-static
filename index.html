@@ -398,20 +398,8 @@
         <!-- Validators Section -->
         <div id="section-validators" class="page-section" style="display:none">
             <h2 style="margin-bottom:20px">Active Validators</h2>
-            <div class="card" style="padding:0">
-                <div class="table-row">
-                    <div style="display:flex; align-items:center">
-                        <div class="row-icon">VN</div>
-                        <div class="row-data">
-                            <span class="row-primary">Mainnet-AWS-Primary</span>
-                            <span class="row-secondary">ID: ec2-13-220-55...</span>
-                        </div>
-                    </div>
-                    <div class="row-meta">
-                        <span class="badge-pill">ACTIVE</span>
-                        <span class="row-secondary" style="margin-top:4px">Connected Since: Genesis</span>
-                    </div>
-                </div>
+            <div class="card" style="padding:0" id="validatorsList">
+                <div style="padding:40px; text-align:center; color:#555">Detecting network validators...</div>
             </div>
         </div>
 
@@ -630,6 +618,39 @@
                                 <div class="row-meta">
                                     <span class="row-primary">${h.balance.toLocaleString()} HOME</span>
                                     <span class="badge-pill" style="margin-top:4px">HOLDING</span>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+
+                // Validators List
+                const validatorsList = document.getElementById('validatorsList');
+                if (validatorsList) {
+                    const uniqueValidators = [...new Set(chain.map(b => b.validator))].filter(v => v && v !== "SYSTEM");
+
+                    // Update Dashboard Stat if exists (we use 'Active Validators' label sometimes)
+                    // Currently 'Active Validators' card was replaced by 'Total Holders', 
+                    // but if it ever returns, we can update it here.
+
+                    validatorsList.innerHTML = '';
+                    if (uniqueValidators.length === 0) {
+                        validatorsList.innerHTML = '<div style="padding:40px; text-align:center; color:#555">No external validators detected.</div>';
+                    }
+
+                    uniqueValidators.forEach(v => {
+                        validatorsList.innerHTML += `
+                            <div class="table-row">
+                                <div style="display:flex; align-items:center">
+                                    <div class="row-icon">VN</div>
+                                    <div class="row-data">
+                                        <span class="row-primary">${v}</span>
+                                        <span class="row-secondary">Mainnet Node</span>
+                                    </div>
+                                </div>
+                                <div class="row-meta">
+                                    <span class="badge-pill">ACTIVE</span>
+                                    <span class="row-secondary" style="margin-top:4px">Status: Validating</span>
                                 </div>
                             </div>
                         `;
