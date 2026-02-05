@@ -4,398 +4,429 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HomeChain Explorer | Mainnet</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@700&display=swap"
-        rel="stylesheet">
+    <title>HomeChain Explorer | Solscan Style</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #0f1115;
-            --surface: #1a1d23;
-            --surface-hover: #232730;
-            --border: #2a2e36;
+            --bg-body: #121212;
+            --bg-card: #1c1c1c;
+            --bg-header: #181818;
             --text-primary: #ffffff;
-            --text-secondary: #9ca3af;
-            --accent: #d4af37;
-            /* Gold/Bronze */
-            --success: #34d399;
-            --font-main: 'Inter', sans-serif;
-            --font-display: 'Playfair Display', serif;
+            --text-secondary: #b0b0b0;
+            --accent: #00ffd5;
+            /* Solscan-ish Green/Cyan */
+            --border: #2c2c2c;
+            --hover: #2a2a2a;
         }
 
         * {
             box-sizing: border-box;
-            outline: none;
         }
 
         body {
-            background-color: var(--bg);
+            background-color: var(--bg-body);
             color: var(--text-primary);
-            font-family: var(--font-main);
+            font-family: 'Roboto', sans-serif;
             margin: 0;
-            line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
+            font-size: 14px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 24px;
-        }
-
-        /* Header */
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 60px;
+        /* Navbar */
+        .navbar {
+            background-color: var(--bg-header);
             border-bottom: 1px solid var(--border);
-            padding-bottom: 20px;
+            padding: 0 24px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .brand {
             display: flex;
             align-items: center;
             gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
         }
 
-        .brand-logo {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--accent), #b49120);
-            border-radius: 8px;
+        .logo-circle {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
             color: #000;
-            font-family: var(--font-display);
+            font-weight: 900;
         }
 
-        .brand-text h1 {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            margin: 0;
-            letter-spacing: -0.02em;
+        .search-bar {
+            flex: 1;
+            max-width: 600px;
+            margin: 0 40px;
+            position: relative;
         }
 
-        .brand-text p {
-            margin: 0;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .status-badge {
-            background: rgba(52, 211, 153, 0.1);
-            color: var(--success);
-            padding: 6px 12px;
-            border-radius: 100px;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            border: 1px solid rgba(52, 211, 153, 0.2);
-        }
-
-        .live-dot {
-            width: 8px;
-            height: 8px;
-            background: var(--success);
-            border-radius: 50%;
-            box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
-            animation: pulse 2s infinite;
-        }
-
-        /* Stats Grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
-            margin-bottom: 50px;
-        }
-
-        .metric-card {
-            background: var(--surface);
+        .search-input {
+            width: 100%;
+            background: #252525;
             border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 32px;
-            transition: all 0.3s ease;
+            border-radius: 8px;
+            padding: 10px 16px;
+            color: white;
+            font-family: inherit;
         }
 
-        .metric-card:hover {
+        .search-input:focus {
             border-color: var(--accent);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+            outline: none;
         }
 
-        .metric-label {
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 24px;
         }
 
-        .metric-value {
-            font-size: 2.5rem;
-            font-weight: 300;
-            letter-spacing: -0.02em;
-            color: #fff;
+        /* Market Cards */
+        .market-overview {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
-        .metric-sub {
-            font-size: 0.9rem;
-            color: var(--accent);
-            margin-top: 8px;
-        }
-
-        /* Ledger Table */
-        .ledger-panel {
-            background: var(--surface);
+        .card {
+            background: var(--bg-card);
             border: 1px solid var(--border);
-            border-radius: 16px;
-            overflow: hidden;
+            border-radius: 8px;
+            padding: 20px;
         }
 
-        .ledger-header {
-            padding: 24px 32px;
+        .card-label {
+            color: var(--text-secondary);
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .card-value {
+            font-size: 18px;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .flashing {
+            animation: flash 1s;
+        }
+
+        @keyframes flash {
+            0% {
+                color: var(--accent);
+            }
+
+            100% {
+                color: var(--text-primary);
+            }
+        }
+
+        /* Split View */
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        .section-header {
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .ledger-title {
-            font-size: 1.2rem;
+        .section-title {
+            font-size: 16px;
             font-weight: 500;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
+        .view-all {
+            color: var(--accent);
+            font-size: 12px;
+            text-decoration: none;
+            cursor: pointer;
         }
 
-        th {
-            text-align: left;
-            padding: 16px 32px;
-            color: var(--text-secondary);
-            font-size: 0.85rem;
-            font-weight: 500;
+        .table-row {
+            padding: 16px 20px;
             border-bottom: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background 0.2s;
         }
 
-        td {
-            padding: 20px 32px;
-            border-bottom: 1px solid var(--border);
-            font-feature-settings: "tnum";
-            color: #e5e7eb;
-            font-size: 0.95rem;
-        }
-
-        tr:last-child td {
+        .table-row:last-child {
             border-bottom: none;
         }
 
-        tr:hover td {
-            background: var(--surface-hover);
+        .table-row:hover {
+            background: var(--hover);
         }
 
-        .block-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .hash {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.85rem;
+        .row-icon {
+            width: 40px;
+            height: 40px;
+            background: #2a2a2a;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 16px;
             color: var(--text-secondary);
-            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .row-data {
+            flex: 1;
+        }
+
+        .row-primary {
+            display: block;
+            color: var(--accent);
+            margin-bottom: 4px;
+            cursor: pointer;
+        }
+
+        .row-secondary {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        .row-meta {
+            text-align: right;
+        }
+
+        .badge-pill {
+            background: rgba(0, 255, 213, 0.1);
+            color: var(--accent);
             padding: 4px 8px;
             border-radius: 4px;
-        }
-
-        .amount {
-            text-align: right;
+            font-size: 11px;
             font-weight: 500;
-            color: var(--success);
         }
 
-        @keyframes pulse {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-
-            50% {
-                opacity: 0.5;
-                transform: scale(0.9);
-            }
-
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+        /* Error/Status Bar */
+        .status-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #252525;
+            padding: 8px 24px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            border-top: 1px solid var(--border);
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .metrics-grid {
+        @media (max-width: 900px) {
+            .market-overview {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .split-view {
                 grid-template-columns: 1fr;
             }
 
-            th,
-            td {
-                padding: 16px;
+            .search-bar {
+                display: none;
             }
+
+            /* Hide on mobile for simplicity */
         }
     </style>
 </head>
 
 <body>
 
+    <nav class="navbar">
+        <div class="brand">
+            <div class="logo-circle">H</div>
+            <span>HomeChainScan</span>
+        </div>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="Search by Block, Transaction, Account">
+        </div>
+        <div class="status-indicator">
+            <span class="badge-pill" id="connStatus">CONNECTING...</span>
+        </div>
+    </nav>
+
     <div class="container">
-        <header>
-            <div class="brand">
-                <div class="brand-logo">H</div>
-                <div class="brand-text">
-                    <h1>HOMECHAIN</h1>
-                    <p>Financial Explorer</p>
-                </div>
+        <!-- Stats Cards -->
+        <div class="market-overview">
+            <div class="card">
+                <div class="card-label">Block Height</div>
+                <div class="card-value" id="statHeight">---</div>
             </div>
-            <div class="status-badge" id="netStatus">
-                <div class="live-dot"></div> MAINNET LIVE
+            <div class="card">
+                <div class="card-label">Network Difficulty</div>
+                <div class="card-value" id="statDiff">---</div>
             </div>
-        </header>
-
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-label">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
-                        </path>
-                    </svg>
-                    Block Height
-                </div>
-                <div class="metric-value" id="valHeight">---</div>
-                <div class="metric-sub">Blocks Verified</div>
+            <div class="card">
+                <div class="card-label">Total Supply</div>
+                <div class="card-value" id="statSupply">---</div>
             </div>
-            <div class="metric-card">
-                <div class="metric-label">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                    </svg>
-                    Network Difficulty
-                </div>
-                <div class="metric-value" id="valDiff">---</div>
-                <div class="metric-sub">Mining Complexity</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-label">
-                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
-                        </path>
-                    </svg>
-                    Market Supply
-                </div>
-                <div class="metric-value" id="valSupply">---</div>
-                <div class="metric-sub">HOME Circulation</div>
+            <div class="card">
+                <div class="card-label">Active Validators</div>
+                <div class="card-value">1 (Mainnet)</div>
             </div>
         </div>
 
-        <div class="ledger-panel">
-            <div class="ledger-header">
-                <div class="ledger-title" style="display:flex; gap:10px; align-items:center;">
-                    <span style="width:8px; height:8px; background:var(--accent); border-radius:50%;"></span>
-                    Recent Transactions
+        <!-- Lists -->
+        <div class="split-view">
+            <!-- Blocks -->
+            <div class="card" style="padding:0">
+                <div class="section-header">
+                    <div class="section-title">Latest Blocks</div>
+                    <a class="view-all">View All</a>
                 </div>
-                <div style="font-size:0.85rem; color:var(--text-secondary);">Last synchronized: Just now</div>
+                <div id="blocksList">
+                    <div style="padding:20px; text-align:center; color:#555">Loading blocks...</div>
+                </div>
             </div>
-            <table>
-                <thead>
-                    <tr>
-                        <th width="15%">Height</th>
-                        <th width="20%">Timestamp</th>
-                        <th width="35%">Validator (Miner)</th>
-                        <th width="15%">Tx Count</th>
-                        <th width="15%" style="text-align:right">Reward</th>
-                    </tr>
-                </thead>
-                <tbody id="ledgerNative">
-                    <tr>
-                        <td colspan="5" style="text-align:center; padding:60px; color:var(--text-secondary);">
-                            Establishing secure connection to Mainnet Node...</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
 
-        <footer
-            style="margin-top:60px; text-align:center; color:var(--text-secondary); font-size:0.8rem; border-top:1px solid var(--border); padding-top:20px;">
-            &copy; 2026 HomeChain Core Foundation. All data is immutable and decentralized.
-        </footer>
+            <!-- Transactions -->
+            <div class="card" style="padding:0">
+                <div class="section-header">
+                    <div class="section-title">Latest Transactions</div>
+                    <a class="view-all">View All</a>
+                </div>
+                <div id="txList">
+                    <div style="padding:20px; text-align:center; color:#555">Loading transactions...</div>
+                </div>
+            </div>
+        </div>
     </div>
 
+    <div class="status-bar" id="debugLog">System Initialized.</div>
+
     <script>
-        const API_PROXY = "/api/proxy?endpoint=";
+        const API = "/api/proxy?endpoint=";
 
-        async function init() {
+        function log(msg) {
+            const d = new Date().toLocaleTimeString();
+            document.getElementById('debugLog').innerText = `[${d}] ${msg}`;
+        }
+
+        async function fetchChain() {
             try {
-                // Fetch Chain
-                const r = await fetch(`${API_PROXY}/chain`);
-                if (!r.ok) throw new Error("Connection refused");
-                const chain = await r.json();
-                const head = chain[chain.length - 1];
+                const res = await fetch(`${API}/chain`);
+                if (!res.ok) throw new Error(`Proxy status: ${res.status}`);
 
-                // Update Metrics
-                document.getElementById('valHeight').innerText = chain.length.toLocaleString();
-                document.getElementById('valDiff').innerText = head.difficulty || 4;
-                document.getElementById('valSupply').innerText = (chain.length * 132575).toLocaleString();
+                const chain = await res.json();
+                render(chain);
 
-                document.getElementById('netStatus').innerHTML = '<div class="live-dot"></div> SYSTEM ONLINE';
-                document.getElementById('netStatus').style.borderColor = 'rgba(52, 211, 153, 0.2)';
-                document.getElementById('netStatus').style.color = 'var(--success)';
-
-                // Update Ledger
-                const tbody = document.getElementById('ledgerNative');
-                tbody.innerHTML = '';
-
-                // Show last 7 blocks
-                chain.reverse().slice(0, 7).forEach(b => {
-                    const row = document.createElement('tr');
-                    const ts = new Date(b.timestamp * 1000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-
-                    row.innerHTML = `
-                        <td><a href="#" class="block-link">#${b.index}</a></td>
-                        <td><span style="color:#fff; opacity:0.8">${ts}</span></td>
-                        <td><span class="hash" title="${b.validator}">${b.validator.substring(0, 24)}...</span></td>
-                        <td>${b.transactions.length}</td>
-                        <td class="amount">+132,575 HOME</td>
-                    `;
-                    tbody.appendChild(row);
-                });
+                document.getElementById('connStatus').innerText = "OPERATIONAL";
+                document.getElementById('connStatus').style.color = "var(--accent)";
+                document.getElementById('connStatus').style.background = "rgba(0, 255, 213, 0.1)";
+                log(`Synced. Height: ${chain.length}`);
 
             } catch (e) {
                 console.error(e);
-                document.getElementById('netStatus').innerHTML = '<div style="width:8px; height:8px; background:#ef4444; border-radius:50%; margin-right:8px;"></div> DISCONNECTED';
-                document.getElementById('netStatus').style.borderColor = 'rgba(239, 68, 68, 0.2)';
-                document.getElementById('netStatus').style.color = '#ef4444';
+                document.getElementById('connStatus').innerText = "CONNECTION FAILED";
+                document.getElementById('connStatus').style.color = "#ff4d4d";
+                document.getElementById('connStatus').style.background = "rgba(255, 77, 77, 0.1)";
+                log(`Error: ${e.message}. Retrying...`);
             }
         }
 
-        init();
-        setInterval(init, 8000);
+        function render(chain) {
+            const head = chain[chain.length - 1];
+
+            // Stats
+            document.getElementById('statHeight').innerText = chain.length.toLocaleString();
+            document.getElementById('statDiff').innerText = head.difficulty || 4;
+            document.getElementById('statSupply').innerText = (chain.length * 132575).toLocaleString() + " HOME";
+
+            // Blocks List
+            const blocksContainer = document.getElementById('blocksList');
+            blocksContainer.innerHTML = '';
+
+            const recentBlocks = [...chain].reverse().slice(0, 6);
+
+            recentBlocks.forEach(b => {
+                const div = document.createElement('div');
+                div.className = 'table-row';
+                div.innerHTML = `
+                    <div style="display:flex; align-items:center;">
+                        <div class="row-icon">BK</div>
+                        <div class="row-data">
+                            <span class="row-primary">#${b.index}</span>
+                            <span class="row-secondary">${timeAgo(b.timestamp)}</span>
+                        </div>
+                    </div>
+                    <div class="row-meta">
+                        <span class="row-secondary">Validated by</span>
+                        <span class="row-primary" style="font-size:12px">${b.validator.substring(0, 8)}...</span>
+                        <span class="badge-pill">${b.transactions.length} Txs</span>
+                    </div>
+                `;
+                blocksContainer.appendChild(div);
+            });
+
+            // Mock Transactions (Since endpoint returns full chain, we extract txs)
+            // Ideally we'd flatten chain.transactions but for UI demo we take latest block's txs
+            const txContainer = document.getElementById('txList');
+            txContainer.innerHTML = '';
+
+            let txCount = 0;
+            recentBlocks.forEach(b => {
+                if (txCount >= 6) return;
+                b.transactions.forEach(tx => {
+                    if (txCount >= 6) return;
+                    const div = document.createElement('div');
+                    div.className = 'table-row';
+                    div.innerHTML = `
+                        <div style="display:flex; align-items:center;">
+                            <div class="row-icon" style="color:#fff; font-size:10px">TX</div>
+                            <div class="row-data">
+                                <span class="row-primary">${tx.id ? tx.id.substring(0, 12) + '...' : 'System Reward'}</span>
+                                <span class="row-secondary">Block #${b.index}</span>
+                            </div>
+                        </div>
+                        <div class="row-meta">
+                            <span class="badge-pill">+${tx.amount} HOME</span>
+                            <span class="row-secondary" style="margin-top:4px">To: ${tx.recipient.substring(0, 8)}...</span>
+                        </div>
+                     `;
+                    txContainer.appendChild(div);
+                    txCount++;
+                });
+            });
+
+            if (txCount === 0) {
+                txContainer.innerHTML = '<div style="padding:20px; text-align:center; color:#555">No recent transactions</div>';
+            }
+        }
+
+        function timeAgo(ts) {
+            const seconds = Math.floor((Date.now() / 1000) - ts);
+            if (seconds < 60) return seconds + "s ago";
+            const minutes = Math.floor(seconds / 60);
+            return minutes + "m ago";
+        }
+
+        fetchChain();
+        setInterval(fetchChain, 5000); // 5s refresh
     </script>
 </body>
 
