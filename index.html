@@ -286,6 +286,7 @@
             <a href="javascript:void(0)" class="nav-link active" id="nav-home" onclick="switchTab('home')">Home</a>
             <a href="javascript:void(0)" class="nav-link" id="nav-blocks" onclick="switchTab('blocks')">Blocks</a>
             <a href="javascript:void(0)" class="nav-link" id="nav-txs" onclick="switchTab('txs')">Transactions</a>
+            <a href="javascript:void(0)" class="nav-link" id="nav-holders" onclick="switchTab('holders')">Holders</a>
             <a href="javascript:void(0)" class="nav-link" id="nav-analytics"
                 onclick="switchTab('analytics')">Analytics</a>
             <a href="javascript:void(0)" class="nav-link" id="nav-validators"
@@ -319,8 +320,8 @@
                     <div class="card-value" id="statSupply">---</div>
                 </div>
                 <div class="card">
-                    <div class="card-label">Active Validators</div>
-                    <div class="card-value">1 (Mainnet)</div>
+                    <div class="card-label">Total Holders</div>
+                    <div class="card-value" id="statHolders">---</div>
                 </div>
             </div>
 
@@ -520,6 +521,7 @@
                 const holders = calculateHolders(chain);
                 const totalSupply = holders.reduce((acc, h) => acc + h.balance, 0);
                 document.getElementById('statSupply').innerText = totalSupply.toLocaleString() + " HOME";
+                document.getElementById('statHolders').innerText = holders.length.toLocaleString();
 
                 // Blocks List (Summary & Full)
                 const containerSummary = document.getElementById('blocksListSummary');
