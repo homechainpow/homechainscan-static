@@ -332,13 +332,15 @@
                 const res = await fetch(`${API}/chain`);
                 if (!res.ok) throw new Error(`Proxy status: ${res.status}`);
 
-                const chain = await res.json();
-                render(chain);
+                const data = await res.json();
+                if (!data || !data.chain) throw new Error("Invalid API response structure");
+
+                render(data.chain);
 
                 document.getElementById('connStatus').innerText = "OPERATIONAL";
                 document.getElementById('connStatus').style.color = "var(--accent)";
                 document.getElementById('connStatus').style.background = "rgba(0, 255, 213, 0.1)";
-                log(`Synced. Height: ${chain.length}`);
+                log(`Synced. Height: ${data.chain.length}`);
 
             } catch (e) {
                 console.error(e);
